@@ -72,9 +72,22 @@ route.put("/", async (request, response) => {
         return response.status(400).send("Esse tipo de usuário é inválido.");
     }
 
-    userTable.update({id}, {name, email, password, typeUser});
+    await userTable.update({id}, {name, email, password, typeUser});
 
     return response.status(200).send("Atualizado com sucesso!");
 });
+
+route.delete("/:id", async (request, response) => {
+    const { id } = request.params;
+
+    // hard delete:
+    // await userTable.delete({id});
+
+    // soft delete:
+    await userTable.update({id}, {deletedAt:() => "CURRENT_TIMESTAMP"});
+
+    return response.status(200).send({response: "Usuário excluído com sucesso!"});
+});
+
 
 export default route;
